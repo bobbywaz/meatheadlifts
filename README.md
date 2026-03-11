@@ -1,6 +1,6 @@
 # MeatheadLifts
 
-MeatheadLifts is a simple web app for running a 5x5 lifting program with an A/B workout rotation.
+MeatheadLifts is a simple web app for running a Stronglifts 5x5 lifting program with an A/B workout rotation.
 
 It lets you:
 - Log sets and reps quickly with tap-friendly buttons
