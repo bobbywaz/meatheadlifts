@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StrongLifts 5x5</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <img
+          src="/logo.png"
+          alt="MeatheadLifts logo"
+          class="brand-logo"
+        />
+        <div class="header-actions">
+          {% if is_admin %}
+          <a href="/admin" class="history-link">Admin</a>
+          {% endif %}
+          <form method="post" action="/logout">
+            <button type="submit" class="history-link">Logout</button>
+          </form>
+        </div>
+      </header>
+      <div id="workoutTitle" class="workout-title">Workout - {{ current_user.username }}</div>
+
+      <section id="workoutList" class="workout-list"></section>
+      <button id="finishBtn" class="finish">Finish</button>
+
+      <section class="plates">
+        <div class="section-head">
+          <h2>Plate Calculator</h2>
+          <button id="togglePlates" type="button" class="small-btn">Hide</button>
+        </div>
+
+        <div id="plateContent" class="plate-content">
+          <div class="plate-grid">
+            <label>
+              <span>Target Total (lb)</span>
+              <input id="targetWeight" type="number" min="0" step="0.5" value="135" />
+            </label>
+            <label>
+              <span>Bar Weight (lb)</span>
+              <input id="barWeight" type="number" min="0" step="0.5" value="45" />
+            </label>
+          </div>
+
+          <div class="plate-head">
+            <h3>Your Plates (total count)</h3>
+            <button id="addPlateRow" type="button" class="small-btn">Add Plate</button>
+          </div>
+
+          <div id="plateRows" class="plate-rows"></div>
+
+          <button id="calcPlates" type="button" class="finish">Calculate</button>
+          <div id="plateResult" class="plate-result"></div>
+        </div>
+      </section>
+
+      <section class="calendar">
+        <div class="section-head">
+          <h2>Workout Calendar</h2>
+          <div id="calendarMonth" class="calendar-month"></div>
+        </div>
+        <div class="calendar-weekdays">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+        <div class="calendar-legend">
+          <span><i class="dot done"></i> Completed</span>
+          <span><i class="dot planned"></i> Future Workout</span>
+        </div>
+        <div id="calendarDetail" class="calendar-detail">Tap a day to view workout details.</div>
+      </section>
+
+      <section class="history">
+        <h2>Recent Workouts</h2>
+        <div id="historyList"></div>
+      </section>
+    </main>
+
+    <template id="exerciseTemplate">
+      <article class="exercise-card">
+        <div class="exercise-head">
+          <h3 class="exercise-name"></h3>
+          <label>
+            <span>Weight (lb)</span>
+            <input type="number" min="0" step="2.5" class="weight-input" />
+          </label>
+        </div>
+        <div class="set-buttons"></div>
+        <button type="button" class="notes-btn">Add Notes</button>
+        <textarea
+          class="notes-input hidden"
+          rows="4"
+          placeholder="Add workout notes for this lift..."
+        ></textarea>
+      </article>
+    </template>
+
+    <template id="plateRowTemplate">
+      <div class="plate-row">
+        <label>
+          <span>Plate (lb)</span>
+          <input class="plate-weight" type="number" min="0" step="0.25" />
+        </label>
+        <label>
+          <span>Count</span>
+          <input class="plate-count" type="number" min="0" step="1" />
+        </label>
+        <button type="button" class="small-btn remove-plate">Remove</button>
+      </div>
+    </template>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

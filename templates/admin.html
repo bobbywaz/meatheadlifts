@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin - MeatheadLifts</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <img src="/logo.png" alt="MeatheadLifts logo" class="brand-logo" />
+        <div class="header-actions">
+          <a href="/" class="history-link">Back</a>
+          <form method="post" action="/logout">
+            <button type="submit" class="history-link">Logout</button>
+          </form>
+        </div>
+      </header>
+      <div class="workout-title">Admin: {{ current_user.username }}</div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="{{ 'auth-success' if category == 'success' else 'auth-error' }}">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <section class="history">
+        <h2>Create User</h2>
+        <form method="post" action="/admin/users" class="admin-form">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input
+              type="password"
+              name="password"
+              minlength="8"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"
+              title="At least 8 characters, including uppercase, lowercase, and a number."
+              required
+            />
+          </label>
+          <label class="notes-toggle-row">
+            <input type="checkbox" name="is_admin" class="notes-toggle" />
+            <span>Grant admin group</span>
+          </label>
+          <button type="submit" class="finish">Create User</button>
+        </form>
+      </section>
+
+      <section class="history">
+        <h2>Users</h2>
+        <div class="history-list-admin">
+          {% for user in users %}
+          <div class="history-item">
+            <div class="history-row">
+              <span>{{ user.username }}</span>
+              <span>{{ 'admin' if user.is_admin else 'user' }}</span>
+            </div>
+            <div class="admin-user-tools">
+              <form method="post" action="/admin/users/{{ user.id }}/password" class="admin-inline-form">
+                <input
+                  type="password"
+                  name="new_password"
+                  class="admin-password-input"
+                  minlength="8"
+                  pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"
+                  title="At least 8 characters, including uppercase, lowercase, and a number."
+                  placeholder="New password"
+                  required
+                />
+                <button type="submit" class="history-link">Change Password</button>
+              </form>
+              <form
+                method="post"
+                action="/admin/users/{{ user.id }}/delete"
+                onsubmit="return confirm('Delete user {{ user.username }}?');"
+              >
+                <button
+                  type="submit"
+                  class="history-link history-delete"
+                  {% if user.id == current_user.id %}disabled title="You cannot delete your own account"{% endif %}
+                >
+                  Delete User
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

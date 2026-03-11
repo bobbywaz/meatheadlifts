@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - MeatheadLifts</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app auth-wrap">
+      <section class="auth-card">
+        <img src="/logo.png" alt="MeatheadLifts logo" class="brand-logo auth-logo" />
+        <h1>Login</h1>
+        {% if error %}
+        <div class="auth-error">{{ error }}</div>
+        {% endif %}
+        <form method="post" action="/login" class="auth-form">
+          <input type="hidden" name="next" value="{{ next_url }}" />
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" required autocomplete="username" />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" required autocomplete="current-password" />
+          </label>
+          <button type="submit" class="finish">Sign In</button>
+        </form>
+        <a href="/signup" class="history-link auth-link-button">Create Account</a>
+      </section>
+    </main>
+  </body>
+</html>

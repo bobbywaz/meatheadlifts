@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign Up - MeatheadLifts</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app auth-wrap">
+      <section class="auth-card">
+        <img src="/logo.png" alt="MeatheadLifts logo" class="brand-logo auth-logo" />
+        <h1>Create Account</h1>
+        {% if error %}
+        <div class="auth-error">{{ error }}</div>
+        {% endif %}
+        {% if success %}
+        <div class="auth-success">{{ success }}</div>
+        {% endif %}
+        <form method="post" action="/signup" class="auth-form">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" required autocomplete="email" />
+          </label>
+          <label>
+            <span>Password</span>
+            <input
+              type="password"
+              name="password"
+              required
+              autocomplete="new-password"
+              minlength="8"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"
+              title="At least 8 characters, including uppercase, lowercase, and a number."
+            />
+          </label>
+          <label>
+            <span>Confirm Password</span>
+            <input
+              type="password"
+              name="confirm_password"
+              required
+              autocomplete="new-password"
+              minlength="8"
+            />
+          </label>
+          <div class="auth-note">Password rules: 8+ chars, 1 uppercase, 1 lowercase, 1 number.</div>
+          <button type="submit" class="finish">Create Account</button>
+        </form>
+        <a href="/login" class="history-link auth-link-button">Back to Login</a>
+      </section>
+    </main>
+  </body>
+</html>

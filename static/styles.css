@@ -1,0 +1,528 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --text: #f1f3f7;
+  --muted: #9ea5b5;
+  --accent: #ff4f4f;
+  --accent-dim: #752d2d;
+  --border: #2a2f39;
+  --future: #f0c419;
+  --done: #2ecc71;
+  --done-dim: #1f8d4f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #1b2230 0%, var(--bg) 45%);
+  color: var(--text);
+  font-family: "Segoe UI", "Noto Sans", sans-serif;
+}
+
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.finish {
+  border: 0;
+  background: var(--accent);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  min-height: 46px;
+  font-size: 16px;
+}
+
+.brand-logo {
+  width: 260px;
+  max-width: calc(100% - 120px);
+  height: auto;
+  display: block;
+}
+
+.auth-logo {
+  width: 100%;
+  max-width: 340px;
+  justify-self: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.header-actions form {
+  margin: 0;
+}
+
+.workout-title {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.small-btn {
+  border: 1px solid var(--border);
+  background: #11141a;
+  color: #e6e9ef;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.workout-list {
+  display: grid;
+  gap: 12px;
+}
+
+.exercise-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.exercise-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.exercise-head label,
+.plates label,
+.plate-row label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.weight-input,
+.plates input,
+.plate-row input {
+  background: #0f1218;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 44px;
+  font-size: 16px;
+}
+
+.weight-input {
+  width: 104px;
+}
+
+.notes-btn {
+  border: 1px solid var(--accent-dim);
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  min-height: 38px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.notes-input {
+  width: 100%;
+  background: #0f1218;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 110px;
+  margin-bottom: 10px;
+}
+
+.plates,
+.calendar,
+.history {
+  margin-top: 22px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.plate-content {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.plate-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.plate-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.plate-rows {
+  display: grid;
+  gap: 8px;
+}
+
+.plate-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.plate-result {
+  background: #11141a;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  color: var(--muted);
+  min-height: 42px;
+  line-height: 1.45;
+}
+
+.calendar-month {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-weekdays {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calendar-day {
+  min-height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.calendar-day.empty {
+  visibility: hidden;
+}
+
+.day-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #cfd4de;
+}
+
+.calendar-day.workout-done .day-num {
+  background: var(--done);
+  border-color: var(--done-dim);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.calendar-day.selected .day-num {
+  box-shadow: 0 0 0 2px #7ea6ff;
+}
+
+.calendar-day.future-workout .day-num {
+  border-color: var(--future);
+  color: var(--future);
+  font-weight: 700;
+}
+
+.calendar-legend {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calendar-detail {
+  margin-top: 10px;
+  background: #11141a;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.calendar-detail-session {
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-detail-session:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  margin-right: 6px;
+  border: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.dot.done {
+  background: var(--done);
+  border-color: var(--done-dim);
+}
+
+.dot.planned {
+  background: transparent;
+  border-color: var(--future);
+}
+
+.set-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.set-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-dim);
+  background: var(--accent);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.set-btn.zero {
+  background: #3d414a;
+  border-color: #3d414a;
+  color: #bbb;
+}
+
+.history-item {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.history-link {
+  border: 1px solid var(--border);
+  background: #11141a;
+  color: #e6e9ef;
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-size: 14px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.history-delete {
+  border-color: var(--accent-dim);
+  color: #ff9e9e;
+}
+
+.history-detail {
+  margin-top: 8px;
+  background: #11141a;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+  line-height: 1.4;
+}
+
+.hidden {
+  display: none;
+}
+
+.auth-wrap {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+}
+
+.auth-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.auth-form,
+.admin-form {
+  display: grid;
+  gap: 10px;
+}
+
+.auth-form label,
+.admin-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.auth-error {
+  border: 1px solid var(--accent-dim);
+  color: #ffb7b7;
+  background: #281515;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.auth-success {
+  border: 1px solid var(--done-dim);
+  color: #c9f7db;
+  background: #12261b;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.auth-divider {
+  border-top: 1px solid var(--border);
+  margin: 2px 0;
+}
+
+.auth-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.auth-link-button {
+  text-align: center;
+  text-decoration: none;
+}
+
+.admin-user-tools {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-inline-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-password-input {
+  background: #0f1218;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 44px;
+  font-size: 15px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+
+  .brand-logo {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .set-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .plate-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plate-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .plate-row .remove-plate {
+    grid-column: 1 / -1;
+  }
+}

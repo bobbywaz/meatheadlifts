@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 250" role="img" aria-labelledby="title desc">
+  <title id="title">MeatheadLifts Logo</title>
+  <desc id="desc">A hairy animal lifting a bone-shaped barbell with text MeatheadLifts and 5x5.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1f2a"/>
+      <stop offset="100%" stop-color="#0f1115"/>
+    </linearGradient>
+    <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8a5a2b"/>
+      <stop offset="100%" stop-color="#5a3518"/>
+    </linearGradient>
+    <linearGradient id="bone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6f0e0"/>
+      <stop offset="100%" stop-color="#d6c7a7"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="820" height="250" rx="22" fill="url(#bg)"/>
+
+  <g transform="translate(35,18)">
+    <g transform="translate(0,20)">
+      <ellipse cx="85" cy="25" rx="15" ry="15" fill="url(#bone)"/>
+      <ellipse cx="125" cy="25" rx="15" ry="15" fill="url(#bone)"/>
+      <ellipse cx="640" cy="25" rx="15" ry="15" fill="url(#bone)"/>
+      <ellipse cx="680" cy="25" rx="15" ry="15" fill="url(#bone)"/>
+      <rect x="85" y="13" width="595" height="24" rx="12" fill="url(#bone)"/>
+    </g>
+
+    <g transform="translate(210,62)">
+      <path d="M80 95
+               C55 58, 45 35, 65 12
+               C95 -14, 146 -10, 172 22
+               C194 2, 225 -6, 252 8
+               C283 23, 293 58, 266 92
+               L249 136
+               C242 154, 223 166, 202 163
+               L130 150
+               C106 146, 86 128, 80 95Z" fill="url(#fur)" stroke="#3e2412" stroke-width="5"/>
+
+      <circle cx="127" cy="52" r="4.5" fill="#111"/>
+      <circle cx="205" cy="52" r="4.5" fill="#111"/>
+      <ellipse cx="166" cy="72" rx="16" ry="10" fill="#3e2412"/>
+
+      <path d="M72 70 L18 40" stroke="#5a3518" stroke-width="15" stroke-linecap="round"/>
+      <path d="M274 70 L328 40" stroke="#5a3518" stroke-width="15" stroke-linecap="round"/>
+      <circle cx="18" cy="40" r="10" fill="#8a5a2b" stroke="#3e2412" stroke-width="4"/>
+      <circle cx="328" cy="40" r="10" fill="#8a5a2b" stroke="#3e2412" stroke-width="4"/>
+
+      <path d="M122 143 L100 184" stroke="#5a3518" stroke-width="17" stroke-linecap="round"/>
+      <path d="M208 150 L229 186" stroke="#5a3518" stroke-width="17" stroke-linecap="round"/>
+      <ellipse cx="95" cy="188" rx="18" ry="10" fill="#3e2412"/>
+      <ellipse cx="234" cy="189" rx="18" ry="10" fill="#3e2412"/>
+    </g>
+
+    <text x="410" y="176" text-anchor="middle" font-family="Verdana, Arial, sans-serif" font-size="58" font-weight="700" fill="#ff4f4f">MEATHEADLIFTS</text>
+    <text x="410" y="214" text-anchor="middle" font-family="Verdana, Arial, sans-serif" font-size="34" font-weight="700" fill="#f0c419">5x5</text>
+  </g>
+</svg>
