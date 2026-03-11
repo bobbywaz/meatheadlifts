@@ -37,6 +37,13 @@ services:
 Then open:
 - `http://YOUR_SERVER_IP:18995/login`
 
+
+
+![Plate Calc](https://github.com/bobbywaz/meatheadlifts/blob/main/ss2.png?raw=true)
+
+
+![Calendar](https://github.com/bobbywaz/meatheadlifts/blob/main/ss3.png?raw=true)
+
 Default first-run login:
 - Email: `admin@meatheadlifts.local`
 - Password: `ChangeMe123`
