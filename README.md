@@ -12,7 +12,7 @@ It lets you:
 
 This app was vibe-coded while working out.
 
-![Overview](https://github.com/bobbywaz/VanLifeHA/blob/main/ss1.png?raw=true)
+![Overview](https://github.com/bobbywaz/meatheadlifts/blob/main/ss1.png?raw=true)
 ## Run with Docker Compose
 
 ```yaml
