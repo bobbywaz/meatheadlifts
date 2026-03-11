@@ -20,7 +20,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 APP_DIR = Path(__file__).resolve().parent
-DB_PATH = APP_DIR / "data" / "stronglifts.db"
+DB_PATH = APP_DIR / "data" / "meatheadlifts.db"
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-me-in-production")
@@ -142,8 +142,8 @@ def init_db():
 
     user_count = cur.execute("SELECT COUNT(*) AS count FROM users").fetchone()["count"]
     if user_count == 0:
-        username = os.environ.get("INITIAL_ADMIN_USERNAME", "admin")
-        password = os.environ.get("INITIAL_ADMIN_PASSWORD", "changeme")
+        username = os.environ.get("INITIAL_ADMIN_USERNAME", "admin@meatheadlifts.local")
+        password = os.environ.get("INITIAL_ADMIN_PASSWORD", "ChangeMe123")
         password_hash = generate_password_hash(password)
         cur.execute(
             """

@@ -11,3 +11,33 @@ It lets you:
 - Manage users with admin controls
 
 This app was vibe-coded while working out.
+
+## Run with Docker Compose
+
+```yaml
+services:
+  meatheadlifts:
+    image: ghcr.io/bobbywaz/meatheadlifts:latest
+    container_name: meatheadlifts
+    restart: unless-stopped
+    ports:
+      - "18995:8000"
+    environment:
+      - TZ=America/New_York
+      # Change these on first run:
+      - INITIAL_ADMIN_USERNAME=admin@meatheadlifts.local
+      - INITIAL_ADMIN_PASSWORD=ChangeMe123
+      # Set your own random long secret in production:
+      - SECRET_KEY=replace-with-a-long-random-secret
+    volumes:
+      - ./meatheadlifts-data:/app/data
+```
+
+Then open:
+- `http://YOUR_SERVER_IP:18995/login`
+
+Default first-run login:
+- Email: `admin@meatheadlifts.local`
+- Password: `ChangeMe123`
+
+Change the default password immediately after first login.
