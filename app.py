@@ -4,6 +4,7 @@ import sqlite3
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 from flask import (
     Flask,
@@ -47,6 +48,17 @@ DEFAULT_WEIGHTS = {
 }
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+def is_safe_url(target):
+    if not target:
+        return True
+    parsed_url = urlparse(target)
+    if parsed_url.netloc or parsed_url.scheme:
+        return False
+    if target.startswith('//') or target.startswith('\\\\'):
+        return False
+    return True
 
 
 def get_db():
@@ -469,6 +481,8 @@ def login():
             session.clear()
             session["user_id"] = user["id"]
             next_url = request.args.get("next") or request.form.get("next") or url_for("index")
+            if not is_safe_url(next_url):
+                next_url = url_for("index")
             return redirect(next_url)
 
     return render_login_page(error=error, next_url=request.args.get("next", ""))
