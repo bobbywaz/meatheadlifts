@@ -156,25 +156,7 @@ def init_db():
     if user_count == 0:
         username = os.environ.get("INITIAL_ADMIN_USERNAME", "admin@meatheadlifts.local")
         password = os.environ.get("INITIAL_ADMIN_PASSWORD", "ChangeMe123")
-        password_hash = generate_password_hash(password)
-        cur.execute(
-            """
-            INSERT INTO users (username, password_hash, active, created_at)
-            VALUES (?, ?, 1, ?)
-            """,
-            (username, password_hash, now),
-        )
-        admin_user_id = cur.lastrowid
-        admin_group_id = cur.execute(
-            "SELECT id FROM permission_groups WHERE name = 'admin'"
-        ).fetchone()["id"]
-        cur.execute(
-            """
-            INSERT OR IGNORE INTO user_permission_groups (user_id, group_id)
-            VALUES (?, ?)
-            """,
-            (admin_user_id, admin_group_id),
-        )
+        create_user(conn, username, password, is_admin=True)
 
     conn.commit()
     conn.close()
@@ -241,6 +223,33 @@ def validate_password(password):
     if not re.search(r"\d", value):
         return "Password must include a number"
     return None
+
+
+def create_user(conn, email, password, is_admin=False):
+    cur = conn.cursor()
+    exists = cur.execute("SELECT id FROM users WHERE username = ?", (email,)).fetchone()
+    if exists is not None:
+        return False, "An account with that email already exists"
+
+    now = datetime.utcnow().isoformat()
+    cur.execute(
+        """
+        INSERT INTO users (username, password_hash, active, created_at)
+        VALUES (?, ?, 1, ?)
+        """,
+        (email, generate_password_hash(password), now),
+    )
+    user_id = cur.lastrowid
+
+    if is_admin:
+        group_id = cur.execute(
+            "SELECT id FROM permission_groups WHERE name = 'admin'"
+        ).fetchone()["id"]
+        cur.execute(
+            "INSERT OR IGNORE INTO user_permission_groups (user_id, group_id) VALUES (?, ?)",
+            (user_id, group_id),
+        )
+    return True, user_id
 
 
 def render_login_page(error=None, next_url=""):
@@ -514,20 +523,11 @@ def signup():
         return render_signup_page(error="Passwords do not match")
 
     conn = get_db()
-    cur = conn.cursor()
-    exists = cur.execute("SELECT id FROM users WHERE username = ?", (email,)).fetchone()
-    if exists is not None:
+    success, result = create_user(conn, email, password)
+    if not success:
         conn.close()
-        return render_signup_page(error="An account with that email already exists")
+        return render_signup_page(error=result)
 
-    now = datetime.utcnow().isoformat()
-    cur.execute(
-        """
-        INSERT INTO users (username, password_hash, active, created_at)
-        VALUES (?, ?, 1, ?)
-        """,
-        (email, generate_password_hash(password), now),
-    )
     conn.commit()
     conn.close()
     return render_signup_page(success="Account created. You can now sign in.")
@@ -588,32 +588,11 @@ def admin_create_user():
         return redirect(url_for("admin_page"))
 
     conn = get_db()
-    cur = conn.cursor()
-
-    exists = cur.execute("SELECT id FROM users WHERE username = ?", (email,)).fetchone()
-    if exists is not None:
+    success, result = create_user(conn, email, password, is_admin=make_admin)
+    if not success:
         conn.close()
-        flash("An account with that email already exists", "error")
+        flash(result, "error")
         return redirect(url_for("admin_page"))
-
-    now = datetime.utcnow().isoformat()
-    cur.execute(
-        """
-        INSERT INTO users (username, password_hash, active, created_at)
-        VALUES (?, ?, 1, ?)
-        """,
-        (email, generate_password_hash(password), now),
-    )
-    user_id = cur.lastrowid
-
-    if make_admin:
-        group_id = cur.execute(
-            "SELECT id FROM permission_groups WHERE name = 'admin'"
-        ).fetchone()["id"]
-        cur.execute(
-            "INSERT OR IGNORE INTO user_permission_groups (user_id, group_id) VALUES (?, ?)",
-            (user_id, group_id),
-        )
 
     conn.commit()
     conn.close()
