@@ -56,7 +56,7 @@ def is_safe_url(target):
     parsed_url = urlparse(target)
     if parsed_url.netloc or parsed_url.scheme:
         return False
-    if target.startswith('//') or target.startswith('\\\\'):
+    if target.startswith("//") or target.startswith("\\\\"):
         return False
     return True
 
@@ -72,8 +72,7 @@ def init_db():
     conn = get_db()
     cur = conn.cursor()
 
-    cur.executescript(
-        """
+    cur.executescript("""
         CREATE TABLE IF NOT EXISTS profile (
             id INTEGER PRIMARY KEY CHECK (id = 1),
             next_workout TEXT NOT NULL DEFAULT 'A',
@@ -132,8 +131,7 @@ def init_db():
             FOREIGN KEY(user_id) REFERENCES users(id),
             FOREIGN KEY(group_id) REFERENCES permission_groups(id)
         );
-        """
-    )
+        """)
 
     now = datetime.utcnow().isoformat()
     cur.execute(
@@ -180,19 +178,25 @@ def init_db():
     conn.close()
 
 
+def get_admin_status_query(user_alias="u"):
+    return f"""
+        EXISTS(
+            SELECT 1
+            FROM user_permission_groups upg
+            JOIN permission_groups pg ON pg.id = upg.group_id
+            WHERE upg.user_id = {user_alias}.id AND pg.name = 'admin'
+        )
+    """
+
+
 def get_user_by_id(conn, user_id):
     if not user_id:
         return None
 
     row = conn.execute(
-        """
+        f"""
         SELECT u.id, u.username, u.active,
-               EXISTS(
-                 SELECT 1
-                 FROM user_permission_groups upg
-                 JOIN permission_groups pg ON pg.id = upg.group_id
-                 WHERE upg.user_id = u.id AND pg.name = 'admin'
-               ) AS is_admin
+               {get_admin_status_query('u')} AS is_admin
         FROM users u
         WHERE u.id = ?
         """,
@@ -409,15 +413,15 @@ def write_session_sets_and_weights(cur, session_id, exercises, now_iso):
 
 
 def recalculate_next_workout(cur):
-    latest = cur.execute(
-        """
+    latest = cur.execute("""
         SELECT workout_type
         FROM workout_sessions
         ORDER BY completed_at DESC, id DESC
         LIMIT 1
-        """
-    ).fetchone()
-    next_workout = "A" if latest is None else ("B" if latest["workout_type"] == "A" else "A")
+        """).fetchone()
+    next_workout = (
+        "A" if latest is None else ("B" if latest["workout_type"] == "A" else "A")
+    )
     cur.execute("UPDATE profile SET next_workout = ? WHERE id = 1", (next_workout,))
     return next_workout
 
@@ -475,12 +479,18 @@ def login():
         user = get_user_by_username(conn, email)
         conn.close()
 
-        if user is None or not user["active"] or not check_password_hash(user["password_hash"], password):
+        if (
+            user is None
+            or not user["active"]
+            or not check_password_hash(user["password_hash"], password)
+        ):
             error = "Invalid email or password"
         else:
             session.clear()
             session["user_id"] = user["id"]
-            next_url = request.args.get("next") or request.form.get("next") or url_for("index")
+            next_url = (
+                request.args.get("next") or request.form.get("next") or url_for("index")
+            )
             if not is_safe_url(next_url):
                 next_url = url_for("index")
             return redirect(next_url)
@@ -543,19 +553,12 @@ def logout():
 @admin_required
 def admin_page():
     conn = get_db()
-    rows = conn.execute(
-        """
+    rows = conn.execute(f"""
         SELECT u.id, u.username, u.active,
-               EXISTS(
-                 SELECT 1
-                 FROM user_permission_groups upg
-                 JOIN permission_groups pg ON pg.id = upg.group_id
-                 WHERE upg.user_id = u.id AND pg.name = 'admin'
-               ) AS is_admin
+               {get_admin_status_query('u')} AS is_admin
         FROM users u
         ORDER BY u.username ASC
-        """
-    ).fetchall()
+        """).fetchall()
     conn.close()
 
     users = [
@@ -654,14 +657,9 @@ def admin_delete_user(user_id):
     conn = get_db()
     cur = conn.cursor()
     user = cur.execute(
-        """
+        f"""
         SELECT u.id,
-               EXISTS(
-                 SELECT 1
-                 FROM user_permission_groups upg
-                 JOIN permission_groups pg ON pg.id = upg.group_id
-                 WHERE upg.user_id = u.id AND pg.name = 'admin'
-               ) AS is_admin
+               {get_admin_status_query('u')} AS is_admin
         FROM users u
         WHERE u.id = ?
         """,
@@ -673,18 +671,11 @@ def admin_delete_user(user_id):
         return redirect(url_for("admin_page"))
 
     if user["is_admin"]:
-        admin_count = cur.execute(
-            """
+        admin_count = cur.execute(f"""
             SELECT COUNT(*) AS count
             FROM users u
-            WHERE EXISTS(
-              SELECT 1
-              FROM user_permission_groups upg
-              JOIN permission_groups pg ON pg.id = upg.group_id
-              WHERE upg.user_id = u.id AND pg.name = 'admin'
-            )
-            """
-        ).fetchone()["count"]
+            WHERE {get_admin_status_query('u')}
+            """).fetchone()["count"]
         if admin_count <= 1:
             conn.close()
             return redirect(url_for("admin_page"))
@@ -739,14 +730,12 @@ def api_complete():
 @api_login_required
 def api_history():
     conn = get_db()
-    rows = conn.execute(
-        """
+    rows = conn.execute("""
         SELECT id, workout_type, completed_at
         FROM workout_sessions
         ORDER BY completed_at DESC
         LIMIT 20
-        """
-    ).fetchall()
+        """).fetchall()
 
     history = []
     for row in rows:
@@ -837,7 +826,9 @@ def api_update_history_session(session_id):
         (workout_type, session_id),
     )
     cur.execute("DELETE FROM session_sets WHERE session_id = ?", (session_id,))
-    cur.execute("DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,))
+    cur.execute(
+        "DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,)
+    )
     write_session_sets_and_weights(cur, session_id, exercises, now)
     next_workout = recalculate_next_workout(cur)
 
@@ -861,7 +852,9 @@ def api_delete_history_session(session_id):
         return jsonify({"error": "Workout session not found"}), 404
 
     cur.execute("DELETE FROM session_sets WHERE session_id = ?", (session_id,))
-    cur.execute("DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,))
+    cur.execute(
+        "DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,)
+    )
     cur.execute("DELETE FROM workout_sessions WHERE id = ?", (session_id,))
     next_workout = recalculate_next_workout(cur)
 
@@ -874,19 +867,12 @@ def api_delete_history_session(session_id):
 @api_admin_required
 def api_admin_users():
     conn = get_db()
-    rows = conn.execute(
-        """
+    rows = conn.execute(f"""
         SELECT u.id, u.username, u.active,
-               EXISTS(
-                 SELECT 1
-                 FROM user_permission_groups upg
-                 JOIN permission_groups pg ON pg.id = upg.group_id
-                 WHERE upg.user_id = u.id AND pg.name = 'admin'
-               ) AS is_admin
+               {get_admin_status_query('u')} AS is_admin
         FROM users u
         ORDER BY u.username ASC
-        """
-    ).fetchall()
+        """).fetchall()
     conn.close()
 
     return jsonify(
