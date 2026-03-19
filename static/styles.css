@@ -58,6 +58,18 @@ h3 {
   font-weight: 700;
   min-height: 46px;
   font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.finish:hover,
+.finish:focus {
+  background: #ff6b6b;
+  outline: none;
+}
+
+.finish:active {
+  transform: scale(0.98);
 }
 
 .brand-logo {
@@ -100,18 +112,30 @@ h3 {
   font-size: 14px;
   min-height: 44px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.small-btn:hover,
+.small-btn:focus {
+  background: #1a1e27;
+  border-color: #3e4555;
+  outline: none;
+}
+
+.small-btn:active {
+  transform: scale(0.98);
 }
 
 .workout-list {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .exercise-card {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px;
+  padding: 16px;
 }
 
 .exercise-head {
@@ -147,17 +171,36 @@ h3 {
   width: 104px;
 }
 
+.weight-input:focus,
+.plates input:focus,
+.plate-row input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
 .notes-btn {
-  border: 1px solid var(--accent-dim);
-  background: var(--accent);
-  color: #fff;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
   border-radius: 8px;
   padding: 8px 10px;
   font-size: 13px;
   min-height: 38px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+}
+
+.notes-btn:hover,
+.notes-btn:focus {
+  border-color: var(--muted);
+  color: var(--text);
+  outline: none;
+}
+
+.notes-btn:active {
+  transform: scale(0.98);
 }
 
 .notes-input {
@@ -347,6 +390,19 @@ h3 {
   color: white;
   font-size: 20px;
   font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.set-btn:hover,
+.set-btn:focus {
+  transform: scale(1.05);
+  background: #ff6b6b;
+  outline: none;
+}
+
+.set-btn:active {
+  transform: scale(0.95);
 }
 
 .set-btn.zero {
@@ -384,6 +440,18 @@ h3 {
   font-size: 14px;
   min-height: 44px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.history-link:hover,
+.history-link:focus {
+  background: #1a1e27;
+  border-color: #3e4555;
+  outline: none;
+}
+
+.history-link:active {
+  transform: scale(0.98);
 }
 
 .history-delete {
@@ -524,5 +592,9 @@ button:disabled {
 
   .plate-row .remove-plate {
     grid-column: 1 / -1;
+    margin-top: 4px;
+    background: transparent;
+    border-color: #3e4555;
+    color: #ff9e9e;
   }
 }
