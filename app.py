@@ -408,6 +408,11 @@ def write_session_sets_and_weights(cur, session_id, exercises, now_iso):
         )
 
 
+def delete_session_details(cur, session_id):
+    cur.execute("DELETE FROM session_sets WHERE session_id = ?", (session_id,))
+    cur.execute("DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,))
+
+
 def recalculate_next_workout(cur):
     latest = cur.execute(
         """
@@ -836,8 +841,7 @@ def api_update_history_session(session_id):
         "UPDATE workout_sessions SET workout_type = ? WHERE id = ?",
         (workout_type, session_id),
     )
-    cur.execute("DELETE FROM session_sets WHERE session_id = ?", (session_id,))
-    cur.execute("DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,))
+    delete_session_details(cur, session_id)
     write_session_sets_and_weights(cur, session_id, exercises, now)
     next_workout = recalculate_next_workout(cur)
 
@@ -860,8 +864,7 @@ def api_delete_history_session(session_id):
         conn.close()
         return jsonify({"error": "Workout session not found"}), 404
 
-    cur.execute("DELETE FROM session_sets WHERE session_id = ?", (session_id,))
-    cur.execute("DELETE FROM session_exercise_notes WHERE session_id = ?", (session_id,))
+    delete_session_details(cur, session_id)
     cur.execute("DELETE FROM workout_sessions WHERE id = ?", (session_id,))
     next_workout = recalculate_next_workout(cur)
 
