@@ -19,6 +19,8 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from utils import validate_email, validate_password
+
 APP_DIR = Path(__file__).resolve().parent
 DB_PATH = APP_DIR / "data" / "meatheadlifts.db"
 
@@ -45,9 +47,6 @@ DEFAULT_WEIGHTS = {
     "Overhead Press": 45,
     "Deadlift": 95,
 }
-
-EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-
 
 def get_db():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -207,28 +206,6 @@ def get_user_by_username(conn, username):
         """,
         (normalized,),
     ).fetchone()
-
-
-def validate_email(email):
-    value = (email or "").strip().lower()
-    if not value:
-        return None, "Email is required"
-    if not EMAIL_RE.match(value):
-        return None, "Invalid email format"
-    return value, None
-
-
-def validate_password(password):
-    value = password or ""
-    if len(value) < 8:
-        return "Password must be at least 8 characters"
-    if not re.search(r"[a-z]", value):
-        return "Password must include a lowercase letter"
-    if not re.search(r"[A-Z]", value):
-        return "Password must include an uppercase letter"
-    if not re.search(r"\d", value):
-        return "Password must include a number"
-    return None
 
 
 def render_login_page(error=None, next_url=""):
