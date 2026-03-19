@@ -562,33 +562,27 @@ function addPlateRow(weight = "", count = "") {
 }
 
 function getBestPlateLoad(targetSideUnits, plateTypes) {
-  let best = {
-    usedUnits: -1,
-    plateCount: Number.POSITIVE_INFINITY,
-    picks: null,
-  };
-
   function dfs(index, remainingUnits, usedUnits, plateCount, picks) {
     if (index === plateTypes.length) {
-      if (
-        usedUnits > best.usedUnits ||
-        (usedUnits === best.usedUnits && plateCount < best.plateCount)
-      ) {
-        best = {
-          usedUnits,
-          plateCount,
-          picks: [...picks],
-        };
-      }
-      return;
+      return {
+        usedUnits,
+        plateCount,
+        picks: [...picks],
+      };
     }
 
     const plate = plateTypes[index];
     const maxTake = Math.min(plate.pairs, Math.floor(remainingUnits / plate.units));
 
+    let best = {
+      usedUnits: -1,
+      plateCount: Number.POSITIVE_INFINITY,
+      picks: null,
+    };
+
     for (let take = maxTake; take >= 0; take -= 1) {
       picks.push(take);
-      dfs(
+      const currentResult = dfs(
         index + 1,
         remainingUnits - take * plate.units,
         usedUnits + take * plate.units,
@@ -596,11 +590,19 @@ function getBestPlateLoad(targetSideUnits, plateTypes) {
         picks
       );
       picks.pop();
+
+      if (
+        currentResult.usedUnits > best.usedUnits ||
+        (currentResult.usedUnits === best.usedUnits && currentResult.plateCount < best.plateCount)
+      ) {
+        best = currentResult;
+      }
     }
+
+    return best;
   }
 
-  dfs(0, targetSideUnits, 0, 0, []);
-  return best;
+  return dfs(0, targetSideUnits, 0, 0, []);
 }
 
 function calculatePlates() {
