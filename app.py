@@ -328,9 +328,11 @@ def validate_workout_payload(data):
     if expected != received:
         return None, None, "Exercises do not match workout"
 
+    exercises_dict = {ex.get("name"): ex for ex in exercises}
+
     normalized = []
     for name in expected_exercises:
-        ex = next((item for item in exercises if item.get("name") == name), None)
+        ex = exercises_dict.get(name)
         if ex is None:
             return None, None, f"Missing exercise {name}"
 
