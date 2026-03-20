@@ -24,7 +24,7 @@ APP_DIR = Path(__file__).resolve().parent
 DB_PATH = APP_DIR / "data" / "meatheadlifts.db"
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "change-me-in-production")
+app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(32).hex()
 
 WORKOUTS = {
     "A": [
