@@ -152,27 +152,29 @@ def init_db():
 
     user_count = cur.execute("SELECT COUNT(*) AS count FROM users").fetchone()["count"]
     if user_count == 0:
-        username = os.environ.get("INITIAL_ADMIN_USERNAME", "admin@meatheadlifts.local")
-        password = os.environ.get("INITIAL_ADMIN_PASSWORD", "ChangeMe123")
-        password_hash = generate_password_hash(password)
-        cur.execute(
-            """
-            INSERT INTO users (username, password_hash, active, created_at)
-            VALUES (?, ?, 1, ?)
-            """,
-            (username, password_hash, now),
-        )
-        admin_user_id = cur.lastrowid
-        admin_group_id = cur.execute(
-            "SELECT id FROM permission_groups WHERE name = 'admin'"
-        ).fetchone()["id"]
-        cur.execute(
-            """
-            INSERT OR IGNORE INTO user_permission_groups (user_id, group_id)
-            VALUES (?, ?)
-            """,
-            (admin_user_id, admin_group_id),
-        )
+        username = os.environ.get("INITIAL_ADMIN_USERNAME")
+        password = os.environ.get("INITIAL_ADMIN_PASSWORD")
+
+        if username and password:
+            password_hash = generate_password_hash(password)
+            cur.execute(
+                """
+                INSERT INTO users (username, password_hash, active, created_at)
+                VALUES (?, ?, 1, ?)
+                """,
+                (username, password_hash, now),
+            )
+            admin_user_id = cur.lastrowid
+            admin_group_id = cur.execute(
+                "SELECT id FROM permission_groups WHERE name = 'admin'"
+            ).fetchone()["id"]
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO user_permission_groups (user_id, group_id)
+                VALUES (?, ?)
+                """,
+                (admin_user_id, admin_group_id),
+            )
 
     conn.commit()
     conn.close()
@@ -531,6 +533,8 @@ def signup():
         return render_signup_page(error="An account with that email already exists")
 
     now = datetime.utcnow().isoformat()
+    is_first_user = cur.execute("SELECT COUNT(*) AS count FROM users").fetchone()["count"] == 0
+
     cur.execute(
         """
         INSERT INTO users (username, password_hash, active, created_at)
@@ -538,6 +542,17 @@ def signup():
         """,
         (email, generate_password_hash(password), now),
     )
+    user_id = cur.lastrowid
+
+    if is_first_user:
+        group_id = cur.execute(
+            "SELECT id FROM permission_groups WHERE name = 'admin'"
+        ).fetchone()["id"]
+        cur.execute(
+            "INSERT OR IGNORE INTO user_permission_groups (user_id, group_id) VALUES (?, ?)",
+            (user_id, group_id),
+        )
+
     conn.commit()
     conn.close()
     return render_signup_page(success="Account created. You can now sign in.")

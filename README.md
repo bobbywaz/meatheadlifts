@@ -25,9 +25,12 @@ services:
       - "18995:8000"
     environment:
       - TZ=America/New_York
-      # Change these on first run:
-      - INITIAL_ADMIN_USERNAME=admin@meatheadlifts.local
-      - INITIAL_ADMIN_PASSWORD=ChangeMe123
+      # Option 1: Set an initial admin on first run (recommended)
+      - INITIAL_ADMIN_USERNAME=admin@example.com
+      - INITIAL_ADMIN_PASSWORD=your-secure-password
+      # Option 2: Leave the above unset, and the first user to sign up
+      # on the /signup page will automatically become an admin.
+      #
       # Set your own random long secret in production:
       - SECRET_KEY=replace-with-a-long-random-secret
     volumes:
@@ -36,11 +39,11 @@ services:
 
 Then open:
 - `http://YOUR_SERVER_IP:18995/login`
-Default first-run login:
-- Email: `admin@meatheadlifts.local`
-- Password: `ChangeMe123`
 
-Change the default password immediately after first login.
+**Initial Setup:**
+On the first run, you can either:
+1. Provide `INITIAL_ADMIN_USERNAME` and `INITIAL_ADMIN_PASSWORD` via environment variables.
+2. Go to `/signup` and create the first account, which will automatically be granted admin privileges.
 
 
 ![Plate Calc](https://github.com/bobbywaz/meatheadlifts/blob/main/ss2.png?raw=true)
