@@ -321,10 +321,12 @@ def get_next_workout(conn):
 
 def validate_workout_payload(data):
     workout_type = data.get("workout")
-    exercises = data.get("exercises", [])
-
     if workout_type not in WORKOUTS:
         return None, None, "Invalid workout type"
+
+    exercises = data.get("exercises")
+    if not isinstance(exercises, list):
+        return None, None, "Invalid exercises format"
 
     expected_exercises = WORKOUTS[workout_type]
     expected = set(expected_exercises)
