@@ -58,6 +58,16 @@ h3 {
   font-weight: 700;
   min-height: 46px;
   font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.finish:hover {
+  background: #ff6b6b;
+}
+
+.finish:active {
+  transform: scale(0.98);
 }
 
 .brand-logo {
@@ -86,9 +96,11 @@ h3 {
 }
 
 .workout-title {
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
 }
 
 .small-btn {
@@ -100,6 +112,16 @@ h3 {
   font-size: 14px;
   min-height: 44px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.small-btn:hover {
+  background: #1f242e;
+  border-color: #3b4252;
+}
+
+.small-btn:active {
+  transform: scale(0.98);
 }
 
 .workout-list {
@@ -112,6 +134,7 @@ h3 {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .exercise-head {
@@ -141,6 +164,15 @@ h3 {
   padding: 10px;
   min-height: 44px;
   font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.weight-input:focus,
+.plates input:focus,
+.plate-row input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: var(--accent);
 }
 
 .weight-input {
@@ -158,6 +190,15 @@ h3 {
   font-weight: 700;
   cursor: pointer;
   margin-top: 10px;
+  transition: all 0.2s ease;
+}
+
+.notes-btn:hover {
+  background: #ff6b6b;
+}
+
+.notes-btn:active {
+  transform: scale(0.98);
 }
 
 .notes-input {
@@ -172,6 +213,13 @@ h3 {
   resize: vertical;
   min-height: 110px;
   margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.notes-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: var(--accent);
 }
 
 .plates,
@@ -220,6 +268,7 @@ h3 {
   color: var(--muted);
   min-height: 42px;
   line-height: 1.45;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .calendar-month {
@@ -347,6 +396,16 @@ h3 {
   color: white;
   font-size: 20px;
   font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.set-btn:not(.zero):hover {
+  background: #ff6b6b;
+}
+
+.set-btn:active {
+  transform: scale(0.95);
 }
 
 .set-btn.zero {
@@ -384,6 +443,17 @@ h3 {
   font-size: 14px;
   min-height: 44px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.history-link:hover {
+  background: #1f242e;
+  border-color: #3b4252;
+}
+
+.history-link:active {
+  transform: scale(0.98);
 }
 
 .history-delete {
@@ -417,6 +487,7 @@ h3 {
   padding: 14px;
   display: grid;
   gap: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .auth-form,
@@ -486,6 +557,13 @@ h3 {
   padding: 10px;
   min-height: 44px;
   font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.admin-password-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: var(--accent);
 }
 
 button:disabled {
