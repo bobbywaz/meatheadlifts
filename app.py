@@ -1,6 +1,7 @@
 import os
 import re
 import sqlite3
+import secrets
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
@@ -8,6 +9,7 @@ from urllib.parse import urlparse
 
 from flask import (
     Flask,
+    abort,
     flash,
     g,
     jsonify,
@@ -212,6 +214,24 @@ def get_user_by_id(conn, user_id):
         "is_admin": bool(row["is_admin"]),
     }
 
+
+def generate_csrf_token():
+    if "_csrf_token" not in session:
+        session["_csrf_token"] = secrets.token_hex(32)
+    return session["_csrf_token"]
+
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
+
+@app.before_request
+def csrf_protect():
+    if app.config.get("TESTING"):
+        return
+    if request.method in ["POST", "PUT", "DELETE", "PATCH"]:
+        token = request.form.get("csrf_token") or request.headers.get("X-CSRFToken")
+        if not token or not secrets.compare_digest(token, session.get("_csrf_token", "")):
+            if request.path.startswith("/api/"):
+                return jsonify({"error": "CSRF token missing or incorrect"}), 403
+            abort(403, description="CSRF token missing or incorrect")
 
 def get_user_by_username(conn, username):
     normalized = (username or "").strip().lower()

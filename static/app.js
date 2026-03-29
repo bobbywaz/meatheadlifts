@@ -406,10 +406,14 @@ async function completeWorkout() {
   const editingId = editingSessionId;
   const endpoint = editingId ? `/api/history/${editingId}` : "/api/complete";
   const method = editingId ? "PUT" : "POST";
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
   const res = await fetch(endpoint, {
     method,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken || "",
+    },
     body: JSON.stringify(payload),
   });
 
@@ -473,7 +477,13 @@ async function deleteHistorySession(sessionId) {
     return;
   }
 
-  const res = await fetch(`/api/history/${sessionId}`, { method: "DELETE" });
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+  const res = await fetch(`/api/history/${sessionId}`, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": csrfToken || "",
+    },
+  });
   if (!res.ok) {
     alert("Failed to delete workout.");
     return;
