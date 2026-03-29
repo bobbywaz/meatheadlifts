@@ -374,6 +374,10 @@ def validate_workout_payload(data):
 
 
 def write_session_sets_and_weights(cur, session_id, exercises, now_iso):
+    session_sets_params = []
+    exercise_weights_params = []
+    session_exercise_notes_params = []
+
     for ex in exercises:
         name = ex["name"]
         weight = ex["weight"]
@@ -381,16 +385,23 @@ def write_session_sets_and_weights(cur, session_id, exercises, now_iso):
         notes = ex.get("notes", "")
 
         for i, rep_num in enumerate(reps, start=1):
-            cur.execute(
-                """
-                INSERT INTO session_sets
-                (session_id, exercise_name, set_number, target_reps, completed_reps, weight)
-                VALUES (?, ?, ?, 5, ?, ?)
-                """,
-                (session_id, name, i, rep_num, weight),
-            )
+            session_sets_params.append((session_id, name, i, rep_num, weight))
 
-        cur.execute(
+        exercise_weights_params.append((name, weight, now_iso))
+        session_exercise_notes_params.append((session_id, name, notes))
+
+    if session_sets_params:
+        cur.executemany(
+            """
+            INSERT INTO session_sets
+            (session_id, exercise_name, set_number, target_reps, completed_reps, weight)
+            VALUES (?, ?, ?, 5, ?, ?)
+            """,
+            session_sets_params,
+        )
+
+    if exercise_weights_params:
+        cur.executemany(
             """
             INSERT INTO exercise_weights (exercise_name, weight, updated_at)
             VALUES (?, ?, ?)
@@ -398,17 +409,18 @@ def write_session_sets_and_weights(cur, session_id, exercises, now_iso):
                 weight=excluded.weight,
                 updated_at=excluded.updated_at
             """,
-            (name, weight, now_iso),
+            exercise_weights_params,
         )
 
-        cur.execute(
+    if session_exercise_notes_params:
+        cur.executemany(
             """
             INSERT INTO session_exercise_notes (session_id, exercise_name, notes)
             VALUES (?, ?, ?)
             ON CONFLICT(session_id, exercise_name) DO UPDATE SET
                 notes=excluded.notes
             """,
-            (session_id, name, notes),
+            session_exercise_notes_params,
         )
 
 
