@@ -139,14 +139,16 @@ def init_db():
         (now,),
     )
 
-    for exercise, weight in DEFAULT_WEIGHTS.items():
-        cur.execute(
-            """
-            INSERT OR IGNORE INTO exercise_weights (exercise_name, weight, updated_at)
-            VALUES (?, ?, ?)
-            """,
-            (exercise, weight, now),
-        )
+    exercise_weights_data = [
+        (exercise, weight, now) for exercise, weight in DEFAULT_WEIGHTS.items()
+    ]
+    cur.executemany(
+        """
+        INSERT OR IGNORE INTO exercise_weights (exercise_name, weight, updated_at)
+        VALUES (?, ?, ?)
+        """,
+        exercise_weights_data,
+    )
 
     cur.execute("INSERT OR IGNORE INTO permission_groups (name) VALUES ('admin')")
 
