@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>StrongLifts 5x5</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
@@ -19,6 +20,7 @@
           <a href="/admin" class="history-link">Admin</a>
           {% endif %}
           <form method="post" action="/logout">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="history-link">Logout</button>
           </form>
         </div>

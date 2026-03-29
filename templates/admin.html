@@ -13,6 +13,7 @@
         <div class="header-actions">
           <a href="/" class="history-link">Back</a>
           <form method="post" action="/logout">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="history-link">Logout</button>
           </form>
         </div>
@@ -29,6 +30,7 @@
       <section class="history">
         <h2>Create User</h2>
         <form method="post" action="/admin/users" class="admin-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label>
             <span>Email</span>
             <input type="email" name="email" required />
@@ -63,6 +65,7 @@
             </div>
             <div class="admin-user-tools">
               <form method="post" action="/admin/users/{{ user.id }}/password" class="admin-inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input
                   type="password"
                   name="new_password"
@@ -80,6 +83,7 @@
                 action="/admin/users/{{ user.id }}/delete"
                 onsubmit="return confirm('Delete user {{ user.username }}?');"
               >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button
                   type="submit"
                   class="history-link history-delete"

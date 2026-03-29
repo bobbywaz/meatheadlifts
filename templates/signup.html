@@ -18,6 +18,7 @@
         <div class="auth-success">{{ success }}</div>
         {% endif %}
         <form method="post" action="/signup" class="auth-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label>
             <span>Email</span>
             <input type="email" name="email" required autocomplete="email" />
