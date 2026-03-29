@@ -1,6 +1,8 @@
 import os
 import re
 import sqlite3
+import secrets
+import string
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
@@ -153,7 +155,22 @@ def init_db():
     user_count = cur.execute("SELECT COUNT(*) AS count FROM users").fetchone()["count"]
     if user_count == 0:
         username = os.environ.get("INITIAL_ADMIN_USERNAME", "admin@meatheadlifts.local")
-        password = os.environ.get("INITIAL_ADMIN_PASSWORD", "ChangeMe123")
+        password = os.environ.get("INITIAL_ADMIN_PASSWORD")
+
+        if not password:
+            alphabet = string.ascii_letters + string.digits
+            while True:
+                password = "".join(secrets.choice(alphabet) for _ in range(16))
+                if (
+                    any(c.islower() for c in password)
+                    and any(c.isupper() for c in password)
+                    and any(c.isdigit() for c in password)
+                ):
+                    break
+            print(
+                f"WARNING: INITIAL_ADMIN_PASSWORD not set. Generated random admin password: {password}"
+            )
+
         password_hash = generate_password_hash(password)
         cur.execute(
             """
