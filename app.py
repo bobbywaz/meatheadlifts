@@ -48,6 +48,9 @@ DEFAULT_WEIGHTS = {
 }
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+LOWERCASE_RE = re.compile(r"[a-z]")
+UPPERCASE_RE = re.compile(r"[A-Z]")
+DIGIT_RE = re.compile(r"\d")
 
 
 def is_safe_url(target):
@@ -238,11 +241,11 @@ def validate_password(password):
     value = password or ""
     if len(value) < 8:
         return "Password must be at least 8 characters"
-    if not re.search(r"[a-z]", value):
+    if not LOWERCASE_RE.search(value):
         return "Password must include a lowercase letter"
-    if not re.search(r"[A-Z]", value):
+    if not UPPERCASE_RE.search(value):
         return "Password must include an uppercase letter"
-    if not re.search(r"\d", value):
+    if not DIGIT_RE.search(value):
         return "Password must include a number"
     return None
 
