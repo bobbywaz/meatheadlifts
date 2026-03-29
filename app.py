@@ -178,25 +178,19 @@ def init_db():
     conn.close()
 
 
-def get_admin_status_query(user_alias="u"):
-    return f"""
-        EXISTS(
-            SELECT 1
-            FROM user_permission_groups upg
-            JOIN permission_groups pg ON pg.id = upg.group_id
-            WHERE upg.user_id = {user_alias}.id AND pg.name = 'admin'
-        )
-    """
-
-
 def get_user_by_id(conn, user_id):
     if not user_id:
         return None
 
     row = conn.execute(
-        f"""
+        """
         SELECT u.id, u.username, u.active,
-               {get_admin_status_query('u')} AS is_admin
+               EXISTS(
+                   SELECT 1
+                   FROM user_permission_groups upg
+                   JOIN permission_groups pg ON pg.id = upg.group_id
+                   WHERE upg.user_id = u.id AND pg.name = 'admin'
+               ) AS is_admin
         FROM users u
         WHERE u.id = ?
         """,
@@ -553,9 +547,14 @@ def logout():
 @admin_required
 def admin_page():
     conn = get_db()
-    rows = conn.execute(f"""
+    rows = conn.execute("""
         SELECT u.id, u.username, u.active,
-               {get_admin_status_query('u')} AS is_admin
+               EXISTS(
+                   SELECT 1
+                   FROM user_permission_groups upg
+                   JOIN permission_groups pg ON pg.id = upg.group_id
+                   WHERE upg.user_id = u.id AND pg.name = 'admin'
+               ) AS is_admin
         FROM users u
         ORDER BY u.username ASC
         """).fetchall()
@@ -657,9 +656,14 @@ def admin_delete_user(user_id):
     conn = get_db()
     cur = conn.cursor()
     user = cur.execute(
-        f"""
+        """
         SELECT u.id,
-               {get_admin_status_query('u')} AS is_admin
+               EXISTS(
+                   SELECT 1
+                   FROM user_permission_groups upg
+                   JOIN permission_groups pg ON pg.id = upg.group_id
+                   WHERE upg.user_id = u.id AND pg.name = 'admin'
+               ) AS is_admin
         FROM users u
         WHERE u.id = ?
         """,
@@ -671,10 +675,15 @@ def admin_delete_user(user_id):
         return redirect(url_for("admin_page"))
 
     if user["is_admin"]:
-        admin_count = cur.execute(f"""
+        admin_count = cur.execute("""
             SELECT COUNT(*) AS count
             FROM users u
-            WHERE {get_admin_status_query('u')}
+            WHERE EXISTS(
+                SELECT 1
+                FROM user_permission_groups upg
+                JOIN permission_groups pg ON pg.id = upg.group_id
+                WHERE upg.user_id = u.id AND pg.name = 'admin'
+            )
             """).fetchone()["count"]
         if admin_count <= 1:
             conn.close()
@@ -867,9 +876,14 @@ def api_delete_history_session(session_id):
 @api_admin_required
 def api_admin_users():
     conn = get_db()
-    rows = conn.execute(f"""
+    rows = conn.execute("""
         SELECT u.id, u.username, u.active,
-               {get_admin_status_query('u')} AS is_admin
+               EXISTS(
+                   SELECT 1
+                   FROM user_permission_groups upg
+                   JOIN permission_groups pg ON pg.id = upg.group_id
+                   WHERE upg.user_id = u.id AND pg.name = 'admin'
+               ) AS is_admin
         FROM users u
         ORDER BY u.username ASC
         """).fetchall()
