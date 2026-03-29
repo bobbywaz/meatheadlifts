@@ -319,6 +319,26 @@ def get_next_workout(conn):
     return row["next_workout"] if row else "A"
 
 
+def _validate_reps(name, reps):
+    if not isinstance(reps, list) or not reps:
+        return None, f"Invalid sets for {name}"
+
+    expected_set_count = 1 if name == "Deadlift" else 5
+    if len(reps) != expected_set_count:
+        return None, f"Unexpected set count for {name}"
+
+    normalized_reps = []
+    for rep_value in reps:
+        try:
+            rep_num = int(rep_value)
+        except (TypeError, ValueError):
+            return None, f"Invalid rep value for {name}"
+        if rep_num < 0 or rep_num > 5:
+            return None, f"Rep value out of range for {name}"
+        normalized_reps.append(rep_num)
+
+    return normalized_reps, None
+
 def validate_workout_payload(data):
     workout_type = data.get("workout")
     exercises = data.get("exercises", [])
@@ -332,9 +352,11 @@ def validate_workout_payload(data):
     if expected != received:
         return None, None, "Exercises do not match workout"
 
+    exercise_lookup = {ex.get("name"): ex for ex in reversed(exercises)}
+
     normalized = []
     for name in expected_exercises:
-        ex = next((item for item in exercises if item.get("name") == name), None)
+        ex = exercise_lookup.get(name)
         if ex is None:
             return None, None, f"Missing exercise {name}"
 
@@ -344,22 +366,9 @@ def validate_workout_payload(data):
             return None, None, f"Invalid weight for {name}"
 
         reps = ex.get("sets", [])
-        if not isinstance(reps, list) or not reps:
-            return None, None, f"Invalid sets for {name}"
-
-        expected_set_count = 1 if name == "Deadlift" else 5
-        if len(reps) != expected_set_count:
-            return None, None, f"Unexpected set count for {name}"
-
-        normalized_reps = []
-        for rep_value in reps:
-            try:
-                rep_num = int(rep_value)
-            except (TypeError, ValueError):
-                return None, None, f"Invalid rep value for {name}"
-            if rep_num < 0 or rep_num > 5:
-                return None, None, f"Rep value out of range for {name}"
-            normalized_reps.append(rep_num)
+        normalized_reps, err = _validate_reps(name, reps)
+        if err:
+            return None, None, err
 
         normalized.append(
             {
