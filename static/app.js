@@ -104,27 +104,7 @@ async function loadState() {
 }
 
 function renderSessionDetails(container, detail) {
-  const grouped = new Map();
-  const notesByExercise = detail.notes || {};
-  detail.sets.forEach((setRow) => {
-    if (!grouped.has(setRow.exercise_name)) {
-      grouped.set(setRow.exercise_name, []);
-    }
-    grouped.get(setRow.exercise_name).push(setRow);
-  });
-
-  const lines = [];
-  grouped.forEach((rows, exercise) => {
-    const setText = rows.map((row) => `${row.completed_reps}`).join("/");
-    const weight = rows[0].weight;
-    const noteText = (notesByExercise[exercise] || "").trim();
-    const noteHtml = noteText ? `<div>Notes: ${escapeHtml(noteText)}</div>` : "";
-    lines.push(
-      `<div><strong>${escapeHtml(exercise)}</strong>: ${setText} @ ${weight} lb${noteHtml}</div>`
-    );
-  });
-
-  container.innerHTML = lines.join("");
+  container.innerHTML = buildSessionSummaryHtml(detail);
 }
 
 async function toggleSessionDetails(linkEl, sessionId, detailEl) {
@@ -211,7 +191,7 @@ async function getSessionDetail(sessionId) {
   return detail;
 }
 
-function formatSessionSummary(detail) {
+function buildSessionSummaryHtml(detail) {
   const grouped = new Map();
   const notesByExercise = detail.notes || {};
   detail.sets.forEach((setRow) => {
@@ -275,7 +255,7 @@ async function showCalendarDayDetails(ymd, cellEl) {
         return `
           <div class="calendar-detail-session">
             <div><strong>${ymd}</strong> - Workout ${detail.workout} (${when})</div>
-            ${formatSessionSummary(detail)}
+            ${buildSessionSummaryHtml(detail)}
           </div>
         `;
       })
