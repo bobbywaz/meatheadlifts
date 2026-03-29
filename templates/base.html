@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}StrongLifts 5x5{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app {% block app_class %}{% endblock %}">
+      {% block header %}
+      <header class="topbar">
+        <img
+          src="/logo.png"
+          alt="MeatheadLifts logo"
+          class="brand-logo"
+        />
+        <div class="header-actions">
+          {% block header_actions %}{% endblock %}
+        </div>
+      </header>
+      {% endblock %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

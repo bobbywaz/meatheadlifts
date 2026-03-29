@@ -1,13 +1,12 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sign Up - MeatheadLifts</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-  </head>
-  <body>
-    <main class="app auth-wrap">
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - MeatheadLifts{% endblock %}
+
+{% block app_class %}auth-wrap{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block content %}
       <section class="auth-card">
         <img src="/logo.png" alt="MeatheadLifts logo" class="brand-logo auth-logo" />
         <h1>Create Account</h1>
@@ -49,6 +48,4 @@
         </form>
         <a href="/login" class="history-link auth-link-button">Back to Login</a>
       </section>
-    </main>
-  </body>
-</html>
+{% endblock %}
