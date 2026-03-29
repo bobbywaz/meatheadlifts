@@ -1,28 +1,17 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>StrongLifts 5x5</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-  </head>
-  <body>
-    <main class="app">
-      <header class="topbar">
-        <img
-          src="/logo.png"
-          alt="MeatheadLifts logo"
-          class="brand-logo"
-        />
-        <div class="header-actions">
+{% extends 'base.html' %}
+
+{% block title %}StrongLifts 5x5{% endblock %}
+
+{% block header_actions %}
           {% if is_admin %}
           <a href="/admin" class="history-link">Admin</a>
           {% endif %}
           <form method="post" action="/logout">
             <button type="submit" class="history-link">Logout</button>
           </form>
-        </div>
-      </header>
+{% endblock %}
+
+{% block content %}
       <div id="workoutTitle" class="workout-title">Workout - {{ current_user.username }}</div>
 
       <section id="workoutList" class="workout-list"></section>
@@ -113,7 +102,6 @@
       </div>
     </template>
 
-    <script src="/static/dateUtils.js"></script>
-    <script src="/static/app.js"></script>
-  </body>
-</html>
+      <script src="/static/dateUtils.js"></script>
+      <script src="/static/app.js"></script>
+{% endblock %}

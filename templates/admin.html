@@ -1,22 +1,15 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin - MeatheadLifts</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-  </head>
-  <body>
-    <main class="app">
-      <header class="topbar">
-        <img src="/logo.png" alt="MeatheadLifts logo" class="brand-logo" />
-        <div class="header-actions">
+{% extends 'base.html' %}
+
+{% block title %}Admin - MeatheadLifts{% endblock %}
+
+{% block header_actions %}
           <a href="/" class="history-link">Back</a>
           <form method="post" action="/logout">
             <button type="submit" class="history-link">Logout</button>
           </form>
-        </div>
-      </header>
+{% endblock %}
+
+{% block content %}
       <div class="workout-title">Admin: {{ current_user.username }}</div>
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -93,6 +86,4 @@
           {% endfor %}
         </div>
       </section>
-    </main>
-  </body>
-</html>
+{% endblock %}
