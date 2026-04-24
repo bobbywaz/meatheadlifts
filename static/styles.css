@@ -56,8 +56,10 @@ h3 {
   padding: 12px 18px;
   border-radius: 10px;
   font-weight: 700;
-  min-height: 46px;
+  min-height: 48px;
   font-size: 16px;
+  width: 100%;
+  margin-top: 10px;
 }
 
 .brand-logo {
@@ -98,7 +100,7 @@ h3 {
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 14px;
-  min-height: 44px;
+  min-height: 48px;
   cursor: pointer;
 }
 
@@ -111,7 +113,7 @@ h3 {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px;
+  padding: 16px;
 }
 
 .exercise-head {
@@ -139,8 +141,15 @@ h3 {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px;
-  min-height: 44px;
+  min-height: 48px;
   font-size: 16px;
+}
+
+.weight-input:focus,
+.plates input:focus,
+.plate-row input:focus {
+  outline: 2px solid var(--accent);
+  border-color: transparent;
 }
 
 .weight-input {
@@ -172,6 +181,11 @@ h3 {
   resize: vertical;
   min-height: 110px;
   margin-bottom: 10px;
+}
+
+.notes-input:focus {
+  outline: 2px solid var(--accent);
+  border-color: transparent;
 }
 
 .plates,
@@ -272,7 +286,8 @@ h3 {
 }
 
 .calendar-day.selected .day-num {
-  box-shadow: 0 0 0 2px #7ea6ff;
+  background-color: #3b4b6b;
+  color: #ffffff;
 }
 
 .calendar-day.future-workout .day-num {
