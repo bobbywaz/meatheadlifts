@@ -17,12 +17,140 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
-function cycleRep(button) {
-  let value = Number(button.dataset.reps || "5");
-  value = value <= 0 ? 5 : value - 1;
-  button.dataset.reps = String(value);
-  button.textContent = String(value);
-  button.classList.toggle("zero", value === 0);
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let restTimerInterval = null;
+let restTimerEndTime = 0;
+
+const style = document.createElement('style');
+style.textContent = `
+.set-btn.locked {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #45a049 !important;
+}
+#restTimer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 30px;
+    font-size: 24px;
+    font-family: monospace;
+    z-index: 9999;
+    pointer-events: none;
+    transition: opacity 0.5s;
+}
+#restTimer.hidden {
+    opacity: 0;
+}
+`;
+document.head.appendChild(style);
+
+function playDing() {
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.type = 'sine';
+  osc.frequency.value = 880; 
+  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.5);
+}
+
+function startRestTimer() {
+  const durationSec = 3 * 60;
+  restTimerEndTime = Date.now() + durationSec * 1000;
+  
+  let timerDisplay = document.getElementById('restTimer');
+  if (!timerDisplay) {
+    timerDisplay = document.createElement('div');
+    timerDisplay.id = 'restTimer';
+    document.body.appendChild(timerDisplay);
+  }
+  timerDisplay.classList.remove('hidden');
+
+  if (restTimerInterval) clearInterval(restTimerInterval);
+  let halved = false;
+
+  restTimerInterval = setInterval(() => {
+    const now = Date.now();
+    const diff = Math.ceil((restTimerEndTime - now) / 1000);
+    
+    if (diff <= 0) {
+      timerDisplay.textContent = "0:00";
+      clearInterval(restTimerInterval);
+      restTimerInterval = null;
+      playDing();
+      setTimeout(() => timerDisplay.classList.add('hidden'), 5000);
+      return;
+    }
+    if (!halved && diff <= 90) {
+      halved = true;
+      playDing();
+    }
+    const m = Math.floor(diff / 60);
+    const s = diff % 60;
+    timerDisplay.textContent = `${m}:${String(s).padStart(2, '0')}`;
+  }, 200);
+}
+
+function setupSetButtonInteraction(btn) {
+  let pressTimer = null;
+  let longPressed = false;
+  const startPress = (e) => {
+    if (e.type === 'mousedown' && e.button !== 0) return;
+    longPressed = false;
+    pressTimer = setTimeout(() => {
+      longPressed = true;
+      if (navigator.vibrate) navigator.vibrate(50);
+      const current = btn.dataset.reps;
+      const newVal = prompt("Enter reps:", current);
+      if (newVal !== null) {
+        const num = parseInt(newVal, 10);
+        if (!isNaN(num) && num >= 0) {
+          btn.dataset.reps = String(num);
+          btn.textContent = String(num);
+          btn.classList.toggle("zero", num === 0);
+          btn.classList.remove("locked");
+        }
+      }
+    }, 600);
+  };
+  const cancelPress = () => {
+    if (pressTimer !== null) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+  };
+  const endPress = (e) => {
+    if (pressTimer !== null) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    if (!longPressed) {
+      if (btn.classList.contains("locked")) {
+        btn.classList.remove("locked");
+      } else {
+        btn.classList.add("locked");
+        startRestTimer();
+      }
+    }
+    if (e.type === 'touchend' && e.cancelable) e.preventDefault();
+  };
+  btn.addEventListener('mousedown', startPress);
+  btn.addEventListener('touchstart', startPress, {passive: true});
+  btn.addEventListener('mouseup', endPress);
+  btn.addEventListener('touchend', endPress);
+  btn.addEventListener('mouseleave', cancelPress);
+  btn.addEventListener('touchmove', cancelPress);
+  btn.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); return false; });
 }
 
 function renderWorkout(state) {
@@ -69,7 +197,7 @@ function renderWorkout(state) {
       btn.dataset.reps = String(reps);
       btn.dataset.index = String(idx);
       btn.textContent = String(reps);
-      btn.addEventListener("click", () => cycleRep(btn));
+      setupSetButtonInteraction(btn);
       btnWrap.appendChild(btn);
     });
 

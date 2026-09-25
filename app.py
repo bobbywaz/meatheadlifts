@@ -357,7 +357,7 @@ def validate_workout_payload(data):
                 rep_num = int(rep_value)
             except (TypeError, ValueError):
                 return None, None, f"Invalid rep value for {name}"
-            if rep_num < 0 or rep_num > 5:
+            if rep_num < 0:
                 return None, None, f"Rep value out of range for {name}"
             normalized_reps.append(rep_num)
 
@@ -430,20 +430,45 @@ def get_workout_payload(conn):
     workout_type = get_next_workout(conn)
     exercises = WORKOUTS[workout_type]
 
-    weight_rows = conn.execute(
-        "SELECT exercise_name, weight FROM exercise_weights"
-    ).fetchall()
-    weight_map = {row["exercise_name"]: row["weight"] for row in weight_rows}
-
     payload_exercises = []
     for ex in exercises:
+        row = conn.execute(
+            """
+            SELECT ss.weight, ws.completed_at
+            FROM session_sets ss
+            JOIN workout_sessions ws ON ss.session_id = ws.id
+            WHERE ss.exercise_name = ?
+            ORDER BY ws.completed_at DESC
+            LIMIT 1
+            """,
+            (ex,),
+        ).fetchone()
+
+        weight_row = conn.execute(
+            "SELECT weight FROM exercise_weights WHERE exercise_name = ?", (ex,)
+        ).fetchone()
+        weight = weight_row["weight"] if weight_row else DEFAULT_WEIGHTS.get(ex, 45)
+        last_performance = None
+
+        if row:
+            last_weight = row["weight"]
+            weight = last_weight + 5
+            try:
+                dt = datetime.fromisoformat(row["completed_at"])
+                date_str = f"{dt.month}/{dt.day}/{dt.year}"
+                weight_str = f"{last_weight:g}"
+                last_performance = f"{date_str}: {weight_str}lbs"
+            except (ValueError, TypeError):
+                pass
+
         set_count = 1 if ex == "Deadlift" else 5
         payload_exercises.append(
             {
                 "name": ex,
-                "weight": weight_map.get(ex, DEFAULT_WEIGHTS[ex]),
+                "weight": weight,
                 "sets": [5] * set_count,
                 "notes": "",
+                "last_performance": last_performance,
             }
         )
 
